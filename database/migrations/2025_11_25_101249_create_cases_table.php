@@ -14,14 +14,22 @@ return new class extends Migration
         Schema::create('cases', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('assigned_to')->nullable();
+
             $table->string('case_number')->unique();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('status')->default('pending');
+
+            $table->enum('status', ['pending', 'in-progress', 'closed'])->default('pending');
             $table->date('hearing_date')->nullable();
             $table->timestamps();
 
+            // Foreign Keys
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('assigned_to')->references('id')->on('users')->onDelete('set null');
+
+            // Indexes
+            $table->index(['status', 'assigned_to']);
         });
     }
 

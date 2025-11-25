@@ -20,10 +20,13 @@ class RoleMiddleware
 
         $user = Auth::user();
 
+        $allRoles = $user->roles->pluck('name')->toArray();
+        //dd($allRoles, $roles);
         // If user role is not in allowed roles, block access
-        if (!in_array($user->role, $roles)) {
+        if (!array_intersect($roles, $allRoles)) {
             abort(403, 'Unauthorized action.');
         }
+
 
         return $next($request);
     }
