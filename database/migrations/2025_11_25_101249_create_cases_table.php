@@ -16,12 +16,24 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('assigned_to')->nullable();
 
-            $table->string('case_number')->unique();
-            $table->string('title');
-            $table->text('description')->nullable();
+            // Form fields
+            $table->string('loan_id')->unique();
+            $table->string('full_name');
+            $table->string('email');
+            $table->decimal('amount', 15, 2)->nullable();
+            $table->date('due_date')->nullable();
+            $table->string('loan_agreement')->nullable();
+            $table->string('phone', 20)->nullable();
 
-            $table->enum('status', ['pending', 'in-progress', 'closed'])->default('pending');
-            $table->date('hearing_date')->nullable();
+            // Existing optional fields
+            $table->enum('category', ['credit_card','vehicale','life_insurance','agriculture'])->nullable();
+            $table->string('title')->nullable();
+            $table->text('description')->nullable();
+            $table->decimal('loan_amount', 15, 2)->nullable();
+            $table->decimal('recovered_loan_amount', 15, 2)->nullable();
+            $table->string('file')->nullable();
+
+            $table->enum('status', ['pending', 'in-progress', 'completed', 'cancelled'])->default('pending');
             $table->timestamps();
 
             // Foreign Keys

@@ -20,6 +20,8 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
+            $user->assignRole('defaulter');
+
             return response()->json([
                 'success' => true,
                 'message' => 'User registered successfully.',

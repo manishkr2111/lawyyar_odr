@@ -18,19 +18,16 @@ class UserSeeder extends Seeder
                 'name' => 'Admin One',
                 'email' => 'admin1@example.com',
                 'password' => 'password1',
-                'role' => 'admin',
             ],
             [
                 'name' => 'Admin Two',
                 'email' => 'admin2@example.com',
                 'password' => 'password2',
-                'role' => 'admin',
             ],
             [
                 'name' => 'Manish Kumar',
                 'email' => 'manishkumar@ibarts.in',
                 'password' => 'manishkumar@ibarts.in',
-                'role' => 'admin',
             ],
         ];
         foreach ($users as $data) {
@@ -41,7 +38,6 @@ class UserSeeder extends Seeder
                     'email' => $data['email'],
                     'password' => Hash::make($data['password']),
                     'email_verified_at' => now(),
-                    'role' => $data['role'],
                 ]
             );
             if ($user->wasRecentlyCreated) {
