@@ -21,6 +21,21 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'phone' => 'required|string',
+                'password' => 'required|string|min:6',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation error.',
+                    'data' => $validator->errors()
+                ], 422);
+            }
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -48,19 +63,29 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
-            $data = $request->validate([
+
+            $validator = Validator::make($request->all(), [
                 'email' => 'required|email',
                 'password' => 'required|string|min:6',
+                'phone' => 'required|string',
                 'role' => 'required|exists:roles,name',
             ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation error.',
+                    'data' => $validator->errors()
+                ], 422);
+            }
+            $data = $request->all();
 
             // Check user existence
-            $user = User::where('email', $data['email'])->first();
+            $user = User::where('email', $data['email'])->where('phone', $data['phone'])->first();
 
             if (! $user || ! Hash::check($data['password'], $user->password)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Invalid email or password.',
+                    'message' => 'Invalid email , phone or password.',
                     'data' => []
                 ], 401);
             }
@@ -154,7 +179,7 @@ class AuthController extends Controller
 
             if ($validator->fails()) {
                 return response()->json([
-                    'status' => false,
+                    'success' => false,
                     'message' => 'Validation error.',
                     'data' => $validator->errors()
                 ], 422);
@@ -164,7 +189,7 @@ class AuthController extends Controller
 
             if (!$user) {
                 return response()->json([
-                    'status' => false,
+                    'success' => false,
                     'message' => 'User not found.',
                     'data' => []
                 ], 404);
@@ -182,13 +207,13 @@ class AuthController extends Controller
             Mail::to($user->email)->send(new ResetPasswordMail($user, $token));
 
             return response()->json([
-                'status' => true,
+                'success' => true,
                 'message' => 'Password reset email sent successfully.',
                 'data' => []
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => false,
+                'success' => false,
                 'message' => 'Something went wrong.',
                 'error' => $e->getMessage(),
             ], 500);

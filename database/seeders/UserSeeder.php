@@ -17,17 +17,23 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Admin One',
                 'email' => 'admin1@example.com',
+                'phone' => '1234567890',
                 'password' => 'password1',
+                'email_verified_at' => now(),
             ],
             [
                 'name' => 'Admin Two',
                 'email' => 'admin2@example.com',
                 'password' => 'password2',
+                'phone' => '1234567890',
+                'email_verified_at' => now(),
             ],
             [
                 'name' => 'Manish Kumar',
                 'email' => 'manishkumar@ibarts.in',
                 'password' => 'manishkumar@ibarts.in',
+                'phone' => '1234567890',
+                'email_verified_at' => now(),
             ],
         ];
         foreach ($users as $data) {
@@ -36,10 +42,12 @@ class UserSeeder extends Seeder
                 [
                     'name' => $data['name'],
                     'email' => $data['email'],
+                    'phone' => $data['phone'],
                     'password' => Hash::make($data['password']),
                     'email_verified_at' => now(),
                 ]
             );
+            $user->assignRole('bank_admin', 'super_admin', 'mediator', 'defaulter', 'arbitrator');
             if ($user->wasRecentlyCreated) {
                 $this->command->info('User created successfully!');
             } else {
